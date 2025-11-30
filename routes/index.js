@@ -6,6 +6,6 @@ router.get("/", (req, res) => (
     // #swagger.tags=["Hello World"]
     res.send("Hello world")));
 
-router.use("/user", require("./user"));
+router.use("/users", require("./users"));
 
 module.exports = router;
