@@ -18,14 +18,21 @@ const getAll = async(req, res) => {
 
 const getSingle = async (req, res) => {
     //#swagger.tags = ['Users']
-    const userId = new ObjectId(req.params.id);
-    const result = await mongodb.getDatabase().collection("users").findOne({_id: userId});
-    result.toArray().then((user) => {
-        res.setHeader("Content-Type", "application/json");
-        res.status(200).json(users[0]);
-    }).catch((err) => {
-        res.status(500).json({message: "An error occurred", error: err});
-    });
+    try {
+        const userId = new ObjectId(req.params.id);
+
+        const db = mongodb.getDatabase();
+        const user = await db.db().collection('users').findOne({ _id: userId });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.status(200).json(user);
+
+    } catch (err) {
+        res.status(500).json({ message: 'Fetching user failed.', error: err });
+    }
 };
 
 const createUser = async (req, res) => {
@@ -46,29 +53,68 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     //#swagger.tags = ['Users']
-    const userId = new ObjectId(req.params.id);
-    const user = {
-        email: req.body.email,
-        username: req.body.username,
-        name: req.body.name,
-        ipaddress: req.body.ipaddress,
-    };
-    const response = await mongodb.getDatabase().db().collection('users').replaceOne({ _id: userId }, (user));
-    if (response.modifiedCount > 0) {
-        res.status(204).send();
-    } else {
-        res.status(500).json(response.error || 'Some error occurred while updating the user.');
+    try {
+        const userId = new ObjectId(req.params.id);
+        // Data Validation 
+        const { email, username, name, ipaddress } = req.body;
+        if (!email || !username || !name || !ipaddress) {
+            return res.status(400).json({ message: "All fields are required." });
+        }
+        // Update 
+        const response = await mongodb
+            .getDatabase()
+            .db()
+            .collection("users")
+            .updateOne(
+                { _id: userId },
+                {
+                    $set: {
+                        email,
+                        username,
+                        name,
+                        ipaddress
+                    }
+                }
+            );
+        // --- Case: user not found ---
+        if (response.matchedCount === 0) {
+            return res.status(404).json({ message: "User not found." });
+        }
+        res.status(200).json({ message: "User updated successfully." });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error updating user.",
+            error: error.message,
+        });
     }
 };
 
 const deleteUser = async (req, res) => {
     //#swagger.tags = ['Users']
-    const userId = new ObjectId(req.params.id);
-    const response = await mongodb.getDatabase().db().collection('users').deleteOne({ _id: userId });
-    if (response.deletedCount > 0) {
-        res.status(204).send();
-    } else {
-        res.status(500).json(response.error || 'Some error occurred while deleting the user.');
+    try {
+        const userId = new ObjectId(req.params.id);
+
+        const response = await mongodb
+            .getDatabase()
+            .db()
+            .collection('users')
+            .deleteOne({ _id: userId });
+
+        if (response.deletedCount > 0) {
+            // 成功刪除
+            return res.status(204).send();
+        } else {
+            // 找不到 user
+            return res.status(404).json({
+                message: 'User not found.',
+            });
+        }
+    } catch (error) {
+        console.error('Delete user error:', error);
+        res.status(500).json({
+            message: 'Some error occurred while deleting the user.',
+            error: error.message,
+        });
     }
 };
 
