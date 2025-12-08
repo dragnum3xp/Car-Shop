@@ -88,7 +88,7 @@ async function updateStore(req, res) {
     const response = await mongodb
       .getDatabase()
       .db("CarShop")
-      .collection("Cars")
+      .collection("store")
       .replaceOne({ _id: StoreId }, store);
     if (response.modifiedCount > 0) {
       return res.status(204).send();
