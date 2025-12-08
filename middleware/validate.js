@@ -23,10 +23,10 @@ const saveUser = (req, res, next) => {
 const saveCar = (req, res, next) => {
   const validationRule = {
     carName: 'required|string',
-    brand: 'required|string',
-    year: 'required|integer',
-    color: 'required|string',
-    price: 'required|integer',
+    brand: 'string',
+    year: 'integer',
+    color: 'string',
+    price: 'integer',
   };
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
