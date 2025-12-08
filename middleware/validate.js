@@ -64,9 +64,9 @@ const saveStore = (req, res, next) => {
 const saveRepair = (req, res, next) => {
   const validationRule = {
     carName: 'required|string',
-    brand: 'required|string',
-    year: 'required|integer',
-    entryMonth: 'required|date',
+    brand: 'string',
+    year: 'integer',
+    entryMonth: 'date',
     RepairCost: 'required|integer',
   };
   validator(req.body, validationRule, {}, (err, status) => {
