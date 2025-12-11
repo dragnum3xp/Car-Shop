@@ -46,7 +46,9 @@ async function createCar(req, res) {
     brand: req.body.brand,
     year: req.body.year,
     color: req.body.color,
-    price: req.body.price
+    price: req.body.price,
+    miles: req.body.miles,
+    customizable: req.body.customizable
   };
   try {
     const response = await mongodb
@@ -74,7 +76,10 @@ async function updateCar(req, res) {
     brand: req.body.brand,
     year: req.body.year,
     color: req.body.color,
-    price: req.body.price
+    price: req.body.price,
+    miles: req.body.miles,
+    customizable: req.body.customizable
+
   };
   try {
     const response = await mongodb

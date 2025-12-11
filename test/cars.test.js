@@ -29,7 +29,9 @@ describe("Cars API CRUD Test", () => {
         brand: "Honda",
         year: "2020",
         color: "Black",
-        price: "90000"
+        price: "90000",
+        miles: "800",
+        customizable: "No"
       });
 
     expect(response.status).toBe(201);
