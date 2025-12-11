@@ -46,7 +46,9 @@ describe("Cars API CRUD Test", () => {
       brand: "Toyota",
       year: "2022",
       color: "White",
-      price: "85000"
+      price: "85000",
+      miles: "800",
+      customizable: "No"
     });
 
     const response = await request(app).get(`/cars/${insertedCar.insertedId}`);
